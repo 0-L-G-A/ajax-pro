@@ -1,7 +1,7 @@
 {
   "name": "ajax",
   "version": "1.0.0",
-  "description": "hw",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,8 @@
   "dependencies": {
     "express": "^4.17.1"
   },
-  "devDependencies": {},
-  "description": ""
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  }
 }

@@ -2,46 +2,46 @@ const buttonLoadInfo = document.querySelector('.btnLoadInfo');
 
 buttonLoadInfo.addEventListener("click", getData);
 
+
 async function getData(){
-    let response = await fetch("http://localhost:8000/", {mode: 'no-cors',})
-    console.log(response)
+    let res = await fetch("http://localhost:2020/users", )
+    
+    const json = await streamToJSON(res)
+    console.log(json)
+
 }
 
+async function streamToJSON(response){
+    // console.log(response)
+    const rb = response.body;
+    // console.log(rb)
+    const reader = await rb.getReader();
+    // console.log(reader)
+    const stream = await new ReadableStream({
+        start(controller) {
+        // The following function handles each data chunk
+        function push() {
+            // "done" is a Boolean and value a "Uint8Array"
+            reader.read().then( ({done, value}) => {
+            // If there is no more data to read
+            if (done) {
+                // console.log('done', done);
+                controller.close();
+                return;
+            }
+            // Get the data and send it to the browser via the controller
+            controller.enqueue(value);
+            // Check chunks by logging to the console
+            // console.log(done, value);
+            push();
+            })
+        }
 
-// fetch('https://www.example.org')
-// .then(response => response.body)
-// .then(rb => {
-//   const reader = rb.getReader();
-
-//   return new ReadableStream({
-//     start(controller) {
-//       // The following function handles each data chunk
-//       function push() {
-//         // "done" is a Boolean and value a "Uint8Array"
-//         reader.read().then( ({done, value}) => {
-//           // If there is no more data to read
-//           if (done) {
-//             console.log('done', done);
-//             controller.close();
-//             return;
-//           }
-//           // Get the data and send it to the browser via the controller
-//           controller.enqueue(value);
-//           // Check chunks by logging to the console
-//           console.log(done, value);
-//           push();
-//         })
-//       }
-
-//       push();
-//     }
-//   });
-// })
-// .then(stream => {
-//   // Respond with our stream
-//   return new Response(stream, { headers: { "Content-Type": "text/html" } }).text();
-// })
-// .then(result => {
-//   // Do things with result
-//   console.log(result);
-// });
+        push();
+        }
+    });
+    // console.log(stream);
+    const newResponse = await new Response(stream, { headers: { "Content-Type": "application/json" } }).json();
+    // console.log(newResponse)
+    return newResponse;
+}

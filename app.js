@@ -1,11 +1,14 @@
-const http = require('http');
-const fs = require('fs');
+const express = require('express');
+const cors = require('cors');
+const users = require('./static/users.json')
 
-//серваки готові. Цей слухає порт 8000. Це бекенд, що повертає джсон
-http.createServer((req, res) => {
-    const readStream = fs.createReadStream('./static/users.json');
-    res.writeHead(200, {'Content-type': 'application/json'});
-    readStream.pipe(res);
-    // res.end();
-}).listen(8000);
-
+const app = express();
+app.use(cors())
+app.get('/users', cors(),(req, res) => {
+    res.json({
+        users
+    })
+})
+app.listen(2020, () => {
+    console.log('server is listening on port 2020')
+})
